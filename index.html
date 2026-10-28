@@ -22,8 +22,8 @@
     li span { flex: 1; overflow-wrap: anywhere; }
     li.done span { color: #8b8d83; text-decoration: line-through; }
     .check { width: 1.2rem; height: 1.2rem; accent-color: #344a36; cursor: pointer; }
-    .remove { padding: .2rem .45rem; background: transparent; color: #888b80; font-size: 1.2rem; }
-    .remove:hover { background: #f1eee5; color: #242620; }
+    .edit, .remove { padding: .35rem .55rem; background: transparent; color: #74796c; font-size: .85rem; }
+    .edit:hover, .remove:hover { background: #f1eee5; color: #242620; }
     footer { display: flex; justify-content: space-between; align-items: center; color: #74796c; font-size: .9rem; }
     footer button { padding: .35rem .55rem; background: transparent; color: #74796c; font-size: .85rem; }
     footer button:hover { background: #ebe8de; color: #242620; }
@@ -70,13 +70,22 @@
         checkbox.addEventListener('change', () => { task.done = checkbox.checked; save(); });
         const label = document.createElement('span');
         label.textContent = task.text;
+        const edit = document.createElement('button');
+        edit.type = 'button';
+        edit.className = 'edit';
+        edit.textContent = 'Изменить';
+        edit.setAttribute('aria-label', `Редактировать задачу «${task.text}»`);
+        edit.addEventListener('click', () => {
+          const text = window.prompt('Изменить задачу', task.text)?.trim();
+          if (text && text.length <= 160) { task.text = text; save(); }
+        });
         const remove = document.createElement('button');
         remove.type = 'button';
         remove.className = 'remove';
         remove.textContent = '×';
         remove.setAttribute('aria-label', `Удалить задачу «${task.text}»`);
         remove.addEventListener('click', () => { tasks = tasks.filter(item => item !== task); save(); });
-        row.append(checkbox, label, remove);
+        row.append(checkbox, label, edit, remove);
         list.append(row);
       }
       const remaining = tasks.filter(task => !task.done).length;
